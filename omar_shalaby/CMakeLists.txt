@@ -159,7 +159,7 @@ include_directories(
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-# catkin_install_python(PROGRAMS src/simple_logic_node.py
+# catkin_install_python(PROGRAMS src/simple_logic_node.py src/naive_maze.py
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
