@@ -52,7 +52,7 @@ class SimpleLogicNode:
                     print("I reached the Goal you can end the program")
                     rospy.sleep(1/rate)
                 else:
-                    if(self.rangesY>1):
+                    if(self.rangesY != 1):
                         self.move_msg = "N"
                         print("Moving North")
                         print()
