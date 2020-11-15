@@ -12,19 +12,22 @@ from pcimr_simulation.srv import InitPos
 class NaiveMazeNode:
 
     def __init__(self):
-	# Initialize Service Call
+        self.goala = int(input("Set your x Goal: "))
+        self.goalb = int(input("Set your y Goal"))
+        self.a = 0
+        self.b = 0
         rospy.wait_for_service('init_pos')
         try:
             s = rospy.ServiceProxy('init_pos', InitPos)
-            a = int(input("Set your x goal: "))
-            b = int(input("Set your y goal: "))
-            s_1 = s(a , b)
+            self.a = int(input("Set your x initial position: "))
+            self.b = int(input("Set your y initial position: "))
+            s_1 = s(self.a , self.b)
             #Make sure the inserted goal position is Valid
             while str(s_1) != str("success: True"):
             	print("Goal is unreachable enter coordinates again")
-            	a = int(input("Set your x goal: "))
-            	b = int(input("Set your y goal: "))
-            	s_1 = s(a , b)
+            	self.a = int(input("Set your x initial position: "))
+            	self.b = int(input("Set your y initial position: "))
+            	s_1 = s(self.a , self.b)
       
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
@@ -63,22 +66,35 @@ class NaiveMazeNode:
         while not rospy.is_shutdown():
 
             if rate:
-                if(self.robot_position.x == 16 and self.robot_position.y == 12):
+                if(self.robot_position.x == self.goala and self.robot_position.y == self.goalb):
                     print("I reached the Goal you can end the program")
                     rospy.sleep(1/rate)
                 else:
-                    if(self.rangesT != 1):
+                    if(self.rangesT != 1 and self.robot_position.y < self.goalb):
                         self.move_msg = "N"
                         print("Moving North")
                         print()
                         self.pub_move.publish(self.move_msg)
                         rospy.sleep(1/rate)
-                    else:
+                    elif(self.rangesR != 1 and self.robot_position.x < self.goala):
                         self.move_msg = "E"
-                        print("Found wall moving east")
+                        print("Moving East")
                         print()
                         self.pub_move.publish(self.move_msg)
                         rospy.sleep(1/rate)
+                    elif(self.rangesD != 1 and self.robot_position.y > self.goalb):
+                        self.move_msg = "S"
+                        print("Moving South")
+                        print()
+                        self.pub_move.publish(self.move_msg)
+                        rospy.sleep(1/rate)
+                    elif(self.rangesL != 1 and self.robot_position.x > self.goala):
+                        self.move_msg = "W"
+                        print("Moving West")
+                        print()
+                        self.pub_move.publish(self.move_msg)
+                        rospy.sleep(1/rate)
+                       
     
 if __name__ == "__main__":
     rospy.init_node('naive_maze_node')
