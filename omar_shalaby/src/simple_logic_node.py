@@ -30,7 +30,6 @@ class SimpleLogicNode:
         
         self.move_msg = ""
         self.robot_position = Point()
-        self.rangesX = 0
         self.rangesY = 0
 
     def cb_position(self, msg):
@@ -38,7 +37,6 @@ class SimpleLogicNode:
         self.robot_position.y = msg.y
     
     def cb_scan(self, msg):
-        self.rangesX = msg.ranges[1]
         self.rangesY = msg.ranges[2]
 
         
