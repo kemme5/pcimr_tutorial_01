@@ -13,7 +13,7 @@ class NaiveMazeNode:
 
     def __init__(self):
         self.goala = int(input("Set your x Goal: "))
-        self.goalb = int(input("Set your y Goal"))
+        self.goalb = int(input("Set your y Goal: "))
         self.a = 0
         self.b = 0
         rospy.wait_for_service('init_pos')
@@ -68,6 +68,8 @@ class NaiveMazeNode:
             if rate:
                 if(self.robot_position.x == self.goala and self.robot_position.y == self.goalb):
                     print("I reached the Goal you can end the program")
+                    rospy.sleep(1/rate)
+                if(self.robot_position.x == 0 and self.robot_position.y == 0):
                     rospy.sleep(1/rate)
                 else:
                     if(self.rangesT != 1 and self.robot_position.y < self.goalb):
