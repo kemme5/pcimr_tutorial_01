@@ -96,7 +96,23 @@ class NaiveMazeNode:
                         print()
                         self.pub_move.publish(self.move_msg)
                         rospy.sleep(1/rate)
-                       
+                    elif(self.rangesT != 1 and self.robot_position.x < self.goala):
+                        self.move_msg = "N"
+                        print("Moving North")
+                        print()
+                        self.pub_move.publish(self.move_msg)
+                        rospy.sleep(1/rate)
+                    elif(self.rangesR != 1 and self.robot_position.y < self.goalb):
+                        self.move_msg = "E"
+                        print("Moving East")
+                        print()
+                        self.pub_move.publish(self.move_msg)
+                        rospy.sleep(1/rate)
+
+
+
+
+   
     
 if __name__ == "__main__":
     rospy.init_node('naive_maze_node')

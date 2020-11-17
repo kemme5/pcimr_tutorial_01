@@ -48,7 +48,7 @@ To run the code first make sure ROS Master is running together with the simulato
  $ rosrun rosrun pcimr_omar_tutorial1 simple_logic_node.py
 ```
 
-- To run the naive Maze Solver
+- To run the naive Maze Solver which is capable of going to any simple goal you assign it in it's vicinity, the bot get's stuck if it needes to correct itself, recursive algorithm would solve this :) or an MDP for example
 ```py
  $ rosrun rosrun pcimr_omar_tutorial1 naive_maze.py
 ```
