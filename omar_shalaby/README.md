@@ -3,58 +3,28 @@
 
 
 
-# Tutorial 1:
+# Tutorial 2:
 ##### Omar Shalaby: 
 ###### ga53laj@mytum.de kemya1995@gmail.com
 
-  - Note: I had to change the schebang operator to 
-```py
- #!/usr/bin/env python3
-```
+  - Note: For some reason while developing i could not get the sensor to give me any values whatsoever [always -inf i tried doing everything i could but still. Also the name space for the pioneer was /pioneer rathar than that given in the tutorial description, since i coded what i understood without having any sensor data let's hope the approach is at least correct]
 
   
 
 
-Information Given:
-  - The goal [as shown by red square on map] is at location (16, 12)
-  - This can be described as keep moving North (N) till you encounter an obtacle then move East (E) till an obstacle then (N) then finally (E)
-  - Since the goal is static this can also be transformed into steps which are : 11 (N), 11 (E), 1 (N), 3 (E)
+IDEA:
+ - The differential robot should check if the obstacle is right infront of it while moving (there's no other moving option) implement this decaying velocity until it stops
 
->The simple_robot_node didnt have any published message regarding the goal  position or any [Info] msg returning success in that case the goal is assumed to be always at location (X, Y) = (16, 12)
+ - For the omnidirectional one, since motion can be anywhere, my idea was to resolve the given velocity command to get the RESULTANT ANGLE of the velocity and given this angle, relative to the robot ofcourse, do the same decaying algo
 
-
-
-
-Two python nodes were implemented in this tutorial.
-
-The First Node simply goes to the goal at 16,12 by following the simple guide, keep moving North till you find the wall then move east, north and east again till you find the goal.
-
-The Second Node takes a goal location as an argument and tries to reach it though naive maze solving.
 
 ### Running The Code
 
-Just a quick reminder, again i guess i had an env issue and had to alter the schebang to i guess for my code to work on your env change from python3 to python:
 
-```py
- #!/usr/bin/env python3
-```
-To run the code first make sure ROS Master is running together with the simulator node by running
-```py
- $ rosrun pcimr_simulation simple_sim_node
-```
 ##### Nodes
-- To run the simple logical node [known path]
-```py
- $ rosrun rosrun pcimr_omar_tutorial1 simple_logic_node.py
+- To run the controller (make sure the name space is correct)
 ```
-
-- To run the naive Maze Solver which is capable of going to any simple goal you assign it in it's vicinity, the bot get's stuck if it needes to correct itself, recursive algorithm would solve this :) or an MDP for example
-```py
- $ rosrun rosrun pcimr_omar_tutorial1 naive_maze.py
+ $ rosrun rosrun pcimr_omar_tutorial1 tutorial2_controller.py
 ```
-
-
-
-
-
+-Unfortunately wasnt able to do the launch file since i was struggling with the sensor
 
