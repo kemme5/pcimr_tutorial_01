@@ -12,6 +12,7 @@ class bot:
     
     def __init__(self):
         self.command = Twist()
+        self.sense = 0
         self.sub_vel = rospy.Subscriber('/cmd_vel', Twist, self.updateVel)
         self.sub_scan = rospy.Subscriber('/scan', LaserScan, self.updateScan)
 
@@ -19,9 +20,9 @@ class bot:
         self.command.linear.x = data.linear.x
         self.command.angular.z = data.angular.z
     def updateScan(self,msg):
-    # values at 0 degree
-        if(msg.ranges[122]<3.0 and msg.ranges[122]>-5.0):
-            print("IN")
+        self.sense = msg.ranges[122] #this is the mid value so middle of robot
+    
+    
 
 
 
@@ -41,7 +42,10 @@ def node():
     pub_move = rospy.Publisher('pioneer/cmd_vel', Twist, queue_size = 10)
     
     while not rospy.is_shutdown():
-        vel_msg.linear.x = bot1.command.linear.x
+        vel_msg.linear.x = bot1.command.linear.x*bot1.sense
+        if bot1.sense<0.2:
+            vel.msg.linear.x = 0
+            vel.msg.angular.z = 0
         vel_msg.angular.z = bot1.command.angular.z
         pub_move.publish(vel_msg)
         rate.sleep()
