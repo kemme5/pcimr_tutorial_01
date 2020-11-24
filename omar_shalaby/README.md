@@ -9,14 +9,13 @@
 
   - Note: For some reason while developing i could not get the sensor to give me any values whatsoever [always -inf i tried doing everything i could but still. Also the name space for the pioneer was /pioneer rathar than that given in the tutorial description, since i coded what i understood without having any sensor data let's hope the approach is at least correct]
 
-  
+-Obviously, as mentioned in the lec, a normal controller for a differential drive robot would fail for omnidirectional ones since we need to check all the surroundings and somehow comeup with the direction we're moving and prevent collisions.  
 
 
 IDEA:
  - The differential robot should check if the obstacle is right infront of it while moving (there's no other moving option) implement this decaying velocity until it stops
 
- - For the omnidirectional one, since motion can be anywhere, my idea was to resolve the given velocity command to get the RESULTANT ANGLE of the velocity and given this angle, relative to the robot ofcourse, do the same decaying algo this was my first try, then i though it would be easier to find the min distance to an obstacle and limit motion towards it, again development was almost impossible without a sensor, pls advise me what i did wrong :)
-
+ - For the omnidirectional one, since motion can be anywhere, my idea was to resolve the given velocity command to get the RESULTANT ANGLE of the velocity and given this angle, relative to the robot ofcourse, do the same decaying algo this was my first try, then i though it would be easier to find the min distance to an obstacle and limit motion towards it, again development was almost impossible without a sensor, pls advise me what i did wrong :) apologies for an incomplete submission
 ### Running The Code
 
 
