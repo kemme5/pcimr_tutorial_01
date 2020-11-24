@@ -15,8 +15,7 @@
 IDEA:
  - The differential robot should check if the obstacle is right infront of it while moving (there's no other moving option) implement this decaying velocity until it stops
 
- - For the omnidirectional one, since motion can be anywhere, my idea was to resolve the given velocity command to get the RESULTANT ANGLE of the velocity and given this angle, relative to the robot ofcourse, do the same decaying algo
-
+ - For the omnidirectional one, since motion can be anywhere, my idea was to resolve the given velocity command to get the RESULTANT ANGLE of the velocity and given this angle, relative to the robot ofcourse, do the same decaying algo this was my first try, then i though it would be easier to find the min distance to an obstacle and limit motion towards it, again development was almost impossible without a sensor, pls advise me what i did wrong :)
 
 ### Running The Code
 
