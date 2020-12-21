@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+
+import rospy
+import math
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
+from math import pow, atan2, sqrt, pi, atan
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Point
+
+
+class Bot:
+    
+    def __init__(self):
+        self.command = Twist()
+        self.sense = 0
+        self.sub_vel = rospy.Subscriber('/teleop_cmd_vel', Twist, self.updateVel)
+        self.sub_scan = rospy.Subscriber('/scan', LaserScan, self.updateScan)
+        #Here we check which robot is being simulated to correctly publish to it
+        #rob_name = rospy.get_param("/rob_name") 
+        #if rob_name == 1:
+            #topic = "pioneer/cmd_vel"
+        #else:
+            #topic = "/cmd_vel" 
+        self.pub_vel = rospy.Publisher('/cmd_vel', Twist, queue_size = 10)
+        self.ang0 = 0
+        self.ang15 = 0
+        self.angneg15 = 0
+        self.ang45 = 0
+        self.angneg45 = 0
+        self.ang90 = 0
+        self.angneg90 = 0
+        self.ang110 = 0
+        self.angneg110 = 0
+
+    def updateVel(self,data):
+        self.command.linear.x = data.linear.x
+        self.command.linear.y = data.linear.y
+        self.command.angular.z = data.angular.z
+        
+    def updateScan(self,msg):
+    
+        #The scan ranges array is 246 entries long covering an angle from -2 rads [-114.59 deg] to 2 rads. We'll sample approx 15, 45, 90, 110
+        self.ang0 = msg.ranges[122]
+        self.ang15 = msg.ranges[122 + 18]
+        self.angneg15 = msg.ranges[122 - 18]
+        self.ang45 = msg.ranges[122 + 48]
+        self.angneg45 = msg.ranges[122 - 48]
+        self.ang90 = msg.ranges[122 + 95]
+        self.angneg90 = msg.ranges[122 - 95]
+        self.ang114 = msg.ranges[244]
+        self.angneg114 = msg.ranges[0] 
+        '''
+        print(self.ang0)
+        print(self.ang15)
+        print(self.ang45)
+        print(self.ang90)
+        print(self.ang110)
+        print(self.angneg15)
+        print(self.angneg45)
+        print(self.angneg90)
+        print(self.angneg110)
+    	'''
+       
+    	
+    	
+    def run(self, rate: float = 1):
+        """
+        Periodically publishes the information from the simulator on the defined topics.
+
+        @param rate: The rate at which the topics are published.
+        """
+        
+        	
+        while not rospy.is_shutdown():
+            
+            velocity_command = Twist()
+ 
+            #sensor_data = [self.ang0, self.ang15, self.angneg15]
+            #min_distance = min(sensor_data)
+            
+            if self.command.linear.y != 0 or self.command.linear.x < 0:  #This means robot is in strafing mode "Omnidirectional"
+                angle = 1*math.degrees(math.atan2(self.command.linear.y, self.command.linear.x))
+                print(angle)
+                
+                if angle > 0 and angle < 80:
+                    sensor_data = [self.ang45, self.ang15, self.ang90]
+                    min_distance = min(sensor_data) 
+                                          
+                elif angle > 80 and angle < 120:
+                    sensor_data = [self.ang90, self.ang45, self.ang114]
+                    min_distance = min(sensor_data)   
+                    
+                elif angle > 120 and angle < 180:
+                    sensor_data = [self.ang114, self.ang90, self.angneg114]
+                    min_distance = min(sensor_data)
+                    
+                elif angle > -80 and angle < 0:
+                    sensor_data = [self.angneg45, self.angneg90, self.angneg15]
+                    min_distance = min(sensor_data)
+                    
+                elif angle > -120 and angle < -80:
+                    sensor_data = [self.angneg90, self.angneg45, self.angneg114]
+                    
+                    min_distance = min(sensor_data)
+                    
+                elif angle > -180 and angle < -120:
+                    sensor_data = [self.angneg114, self.angneg90, self.ang114]
+                    min_distance = min(sensor_data)
+                    
+                elif angle == 180:
+                    sensor_data = [self.angneg114, self.ang114]
+                    min_distance = min(sensor_data)
+                
+                print(min_distance)    
+                if min_distance < 0.35:
+                    velocity_command.linear.x = 0
+                    velocity_command.linear.y = 0
+                    
+                    
+                else:
+                    velocity_command.linear.x = self.command.linear.x
+                    velocity_command.linear.y = self.command.linear.y                    
+                
+    
+                
+            
+            else:
+                
+                sensor_data = [self.ang0, self.ang15, self.angneg15]
+                min_distance = min(sensor_data)
+                print(min_distance)
+                if min_distance < 0.35:
+                    velocity_command.linear.x = 0
+                    velocity_command.linear.y = 0
+                else:
+                    velocity_command.linear.x = self.command.linear.x
+                    velocity_command.linear.y = self.command.linear.y
+                
+                  
+            velocity_command.angular.z = self.command.angular.z
+            self.pub_vel.publish(velocity_command)
+            
+            '''
+            if self.command.linear.x > 0:
+                if min_distance < 0.4:
+                    velocity_command.linear.x = 0.0
+                
+                else:
+                    if min_distance > 3:
+                        velocity_command.linear.x = 1.0
+                    elif min_distance < 3 and min_distance > 1.5:
+                        velocity_command.linear.x = 0.7
+                    elif min_distance < 1.5 and min_distance > 0.4:
+                        velocity_command.linear.x = 0.4
+            if self.command.linear.y > 0:
+                velocity_command.linear.x = self.command.linear.x
+                velocity_command.linear.y = self.command.linear.y
+            velocity_command.angular.z = self.command.angular.z
+            if self.command.angular.z > 0.4:
+                velocity_command.angular.z = 0.4
+            if self.command.angular.z < -0.4:
+                velocity_command.angular.z = -0.4
+            self.pub_vel.publish(velocity_command)    
+            print(velocity_command)    
+            '''
+            
+            if rate:
+                rospy.sleep(1/rate)
+    
+
+
+
+
+
+        
+
+if __name__ == '__main__':
+
+    rospy.init_node('tutorial_2')
+    bot_node = Bot()
+    bot_node.run(rate=30)
+
+
+
