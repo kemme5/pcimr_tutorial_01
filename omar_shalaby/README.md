@@ -7,22 +7,49 @@
 ##### Omar Shalaby: 
 ###### ga53laj@mytum.de kemya1995@gmail.com
 
-  - Note: For some reason while developing i could not get the sensor to give me any values whatsoever [always -inf i tried doing everything i could but still. Also the name space for the pioneer was /pioneer rathar than that given in the tutorial description, since i coded what i understood without having any sensor data let's hope the approach is at least correct]
+In order to startup the simulation environment first export the required robot [either p3dx (pioneer) or rto-1 (robotino)] :
 
--Obviously, as mentioned in the lec, a normal controller for a differential drive robot would fail for omnidirectional ones since we need to check all the surroundings and somehow comeup with the direction we're moving and prevent collisions.  
-
-
-IDEA:
- - The differential robot should check if the obstacle is right infront of it while moving (there's no other moving option) implement this decaying velocity until it stops
-
- - For the omnidirectional one, since motion can be anywhere, my idea was to resolve the given velocity command to get the RESULTANT ANGLE of the velocity and given this angle, relative to the robot ofcourse, do the same decaying algo this was my first try, then i though it would be easier to find the min distance to an obstacle and limit motion towards it, again development was almost impossible without a sensor, pls advise me what i did wrong :) apologies for an incomplete submission
-### Running The Code
-
-
-##### Nodes
-- To run the controller (make sure the name space is correct)
 ```
- $ rosrun rosrun pcimr_omar_tutorial1 tutorial2_controller.py
+  $ export ROBOT = p3dx 
 ```
--Unfortunately wasnt able to do the launch file since i was struggling with the sensor
+
+or
+
+```
+  $ export ROBOT = rto-1
+```
+
+
+Upon choosing the required robot then launch the simuation in Gazebo by running :
+
+```
+  $ roslaunch rto_bringup_sim robot.launch
+```
+Then you need to set the 3 rosparameters ***robot_name*** (1 for Pioneer, 0 for Robotino ***Default in launch file = 0***) that sets the correct topic name, ***max_velocity*** (***Default in launch file = 1.0***) the required max velocity in any axis and ***min_dist*** (***Default in launch file = 0.35***) the min required safe distance to obstacles. Do that by entering :
+
+```
+  $ rosparam set /rob_name 0
+  $ rosparam set /max_velocity 1.0
+  $ rosparam set /min_dist 0.35
+```
+
+You can now launch the teleop node to control using the keyboard ***NOTE: You have to specify the teleop topic when launching by running:***
+
+```
+  $ rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=teleop_cmd_vel
+```
+
+Now run the control node itself using :
+
+```
+  $ rosrun pcimr_omar_tutorial1 tutorial2_controller
+```
+
+You can also a launch file directly with all the parameters and the node by running:
+
+```
+  $ rosrun pcimr_omar_tutorial1 tutorial2_controller
+```
+
+
 
