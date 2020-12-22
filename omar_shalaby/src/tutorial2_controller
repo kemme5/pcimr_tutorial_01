@@ -21,11 +21,13 @@ class Bot:
         self.sub_scan = rospy.Subscriber('/scan', LaserScan, self.updateScan)
         #Here we check which robot is being simulated to correctly publish to it default is 1 --> pioneer, 1 Any other --> rto-1
         rob_name = rospy.get_param("/rob_name", 0) 
+        self.max_velocity = rospy.get_param("/max_velocity", 1.2) 
+        self.min_dist = rospy.get_param("/min_dist", 0.35) 
         if rob_name == 1:
             topic = "pioneer/cmd_vel"
         else:
             topic = "/cmd_vel" 
-        self.pub_vel = rospy.Publisher('/cmd_vel', Twist, queue_size = 10)
+        self.pub_vel = rospy.Publisher(topic, Twist, queue_size = 10)
         self.ang0 = 0
         self.ang15 = 0
         self.angneg15 = 0
@@ -88,7 +90,7 @@ class Bot:
             
             if self.command.linear.y != 0 or self.command.linear.x < 0:  #This means robot is in strafing mode "Omnidirectional"
                 angle = 1*math.degrees(math.atan2(self.command.linear.y, self.command.linear.x))
-                print(angle)
+                
                 
                 if angle > 0 and angle < 80:
                     sensor_data = [self.ang45, self.ang15, self.ang90]
@@ -119,15 +121,18 @@ class Bot:
                     min_distance = min(sensor_data)
                 
                     
-                if min_distance < 0.35:
+                if min_distance < self.min_dist:
                     velocity_command.linear.x = 0
                     velocity_command.linear.y = 0
                     
                     
+                elif min_distance > self.min_dist and min_distance < 2.5 * self.min_dist:
+                    velocity_command.linear.x = self.max_velocity / 2
+                    velocity_command.linear.y = self.max_velocity / 2
+                    self.max_velocity / 2                   
                 else:
-                    velocity_command.linear.x = self.command.linear.x
-                    velocity_command.linear.y = self.command.linear.y                    
-                
+                    velocity_command.linear.x = self.max_velocity
+                    velocity_command.linear.y = self.max_velocity
     
                 
             
@@ -135,18 +140,15 @@ class Bot:
                 
                 sensor_data = [self.ang0, self.ang45, self.angneg45]
                 min_distance = min(sensor_data)
+                velocity_command.linear.y = 0
                 #print(min_distance)
-                if min_distance < 0.35:
-                    velocity_command.linear.x = 0
-                    velocity_command.linear.y = 0
+                if min_distance < self.min_dist:
+                    velocity_command.linear.x = 0   
+                elif min_distance > self.min_dist and min_distance < 2.5 * self.min_dist:
+                    velocity_command.linear.x = self.max_velocity / 2        
                 else:
-                    velocity_command.linear.x = self.command.linear.x
-                    velocity_command.linear.y = self.command.linear.y
-                
-            print(sensor_data) 
-            velocity_command.angular.z = self.command.angular.z
-            self.pub_vel.publish(velocity_command)
-            
+                    velocity_command.linear.x = self.max_velocity
+
             '''
             if self.command.linear.x > 0:
                 if min_distance < 0.4:
