@@ -49,7 +49,6 @@ You can also a launch file directly with all the parameters and the node by runn
 
 ```
   $ roslaunch pcimr_omar_tutorial1 tut2.launch 
-
 ```
 
 So all is working fine for me, im just having trouble dealing with backing up or blind angles, should i've sampled the entire range rather than only a couple of angles ??
