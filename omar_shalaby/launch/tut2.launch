@@ -1,6 +1,6 @@
 <launch>
     <param name="rob_name" type="int" value="0" />
-    <param name="max_velocity" type="float" value="1.0" />
-    <param name="min_dist" type="float" value="0.35" />
-    <node name="tutorial2_controller" pkg="pcimr_omar_tutorial1" type="tutorial2_controller.py" output="screen"/>
+    <param name="max_velocity" type="double" value="1.0" />
+    <param name="min_dist" type="double" value="0.35" />
+    <node name="tutorial2_controller" pkg="pcimr_omar_tutorial1" type="tutorial2_controller" output="screen"/>
 </launch>
