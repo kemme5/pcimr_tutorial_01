@@ -21,7 +21,7 @@ class Bot:
         self.sub_scan = rospy.Subscriber('/scan', LaserScan, self.updateScan)
         #Here we check which robot is being simulated to correctly publish to it default is 1 --> pioneer, 1 Any other --> rto-1
         rob_name = rospy.get_param("/rob_name", 0) 
-        self.max_velocity = rospy.get_param("/max_velocity", 1.2) 
+        self.max_velocity = rospy.get_param("/max_velocity", 1.0) 
         self.min_dist = rospy.get_param("/min_dist", 0.35) 
         if rob_name == 1:
             topic = "pioneer/cmd_vel"
@@ -126,13 +126,30 @@ class Bot:
                     velocity_command.linear.y = 0
                     
                     
-                elif min_distance > self.min_dist and min_distance < 2.5 * self.min_dist:
-                    velocity_command.linear.x = self.max_velocity / 2
-                    velocity_command.linear.y = self.max_velocity / 2
-                    self.max_velocity / 2                   
-                else:
+                elif min_distance > self.min_dist and min_distance < 3 * self.min_dist:
+                     
+                    velocity_command.linear.x = 1*self.max_velocity / 2 
+                    velocity_command.linear.y = 1*self.max_velocity / 2    
+                    if self.command.linear.x < 0:
+                        velocity_command.linear.x = -1*self.max_velocity / 2
+                    if self.command.linear.y < 0:
+                        velocity_command.linear.y = -1*self.max_velocity / 2
+                    if self.command.linear.x == 0:
+                        velocity_command.linear.x = 0
+                    if self.command.linear.y == 0:
+                        velocity_command.linear.y = 0
+                                 
+                elif min_distance > 3 * self.min_dist:
                     velocity_command.linear.x = self.max_velocity
                     velocity_command.linear.y = self.max_velocity
+                    if self.command.linear.x < 0:
+                        velocity_command.linear.x = -1*self.max_velocity 
+                    if self.command.linear.y < 0:
+                        velocity_command.linear.y = -1*self.max_velocity
+                    if self.command.linear.x == 0:
+                        velocity_command.linear.x = 0
+                    if self.command.linear.y == 0:
+                        velocity_command.linear.y = 0
     
                 
             
@@ -144,10 +161,27 @@ class Bot:
                 #print(min_distance)
                 if min_distance < self.min_dist:
                     velocity_command.linear.x = 0   
-                elif min_distance > self.min_dist and min_distance < 2.5 * self.min_dist:
-                    velocity_command.linear.x = self.max_velocity / 2        
+                elif min_distance > self.min_dist and min_distance < 3 * self.min_dist:
+                    velocity_command.linear.x = self.max_velocity / 2
+                    if self.command.linear.x < 0:
+                        velocity_command.linear.x = -1*self.max_velocity / 2
+                    if self.command.linear.x == 0:
+                        velocity_command.linear.x = 0   
                 else:
                     velocity_command.linear.x = self.max_velocity
+                    if self.command.linear.x < 0:
+                        velocity_command.linear.x = -1*self.max_velocity 
+                    if self.command.linear.x == 0:
+                        velocity_command.linear.x = 0
+                   
+                    
+            velocity_command.angular.z = self.command.angular.z  
+            
+            
+                   
+            self.pub_vel.publish(velocity_command)   
+ 
+
 
             '''
             if self.command.linear.x > 0:
@@ -173,7 +207,7 @@ class Bot:
             print(velocity_command)    
             '''
             
-            if rate:
+            if rate:	
                 rospy.sleep(1/rate)
     
 
@@ -185,7 +219,7 @@ class Bot:
 
 if __name__ == '__main__':
 
-    rospy.init_node('tutorial_2')
+    rospy.init_node('tutorial2_controller')
     bot_node = Bot()
     bot_node.run(rate=30)
 
