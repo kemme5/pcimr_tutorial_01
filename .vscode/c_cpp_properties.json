@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/omar/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/omar/catkin_ws/src/husky/husky_base/include/**",
+        "/home/omar/catkin_ws/src/husky/LMS1xx/include/**",
+        "/home/omar/catkin_ws/src/rto_core/rto_local_move/include/**",
+        "/home/omar/catkin_ws/src/rto_core/rto_local_planner/include/**",
+        "/home/omar/catkin_ws/src/rto_core/rto_node/include/**",
+        "/home/omar/catkin_ws/src/rto_core/rto_safety/include/**",
+        "/home/omar/catkin_ws/src/rto_core/rto_teleop/include/**",
+        "/home/omar/catkin_ws/src/slam_toolbox/slam_toolbox/include/**",
+        "/home/omar/catkin_ws/src/sparse_bundle_adjustment/include/**",
+        "/home/omar/catkin_ws/src/turtlebot3_simulations/turtlebot3_fake/include/**",
+        "/home/omar/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/home/omar/catkin_ws/src/turtlebot3/turtlebot3_slam/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ]
+}
